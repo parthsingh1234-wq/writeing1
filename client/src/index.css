@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#F9FAFB] text-slate-900 dark:bg-[#0B0F17] dark:text-slate-100 font-sans transition-colors duration-200 antialiased selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-900;
+  }
+
+  h1, h2, h3, .font-serif-headline {
+    font-family: 'Newsreader', 'Lora', Georgia, serif;
+  }
+}
+
+/* Premium Editorial Glass & Surface Classes */
+.glass-panel {
+  @apply bg-white/90 dark:bg-[#121721]/90 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm;
+}
+
+.glass-card {
+  @apply bg-white dark:bg-[#121721] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md;
+}
+
+.editorial-card {
+  @apply bg-white dark:bg-[#121721] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5;
+}
+
+/* TipTap Editor Custom Styles - Medium & Ghost CMS Style */
+.ProseMirror {
+  @apply outline-none min-h-[480px] px-6 py-6 text-slate-800 dark:text-slate-100 font-sans text-lg leading-relaxed;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #94a3b8;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror h1 {
+  @apply text-4xl font-bold font-serif-headline text-slate-900 dark:text-white mt-8 mb-4 tracking-tight leading-snug;
+}
+
+.ProseMirror h2 {
+  @apply text-2xl font-bold font-serif-headline text-slate-900 dark:text-white mt-6 mb-3 tracking-tight;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-bold text-slate-900 dark:text-white mt-5 mb-2;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-slate-900 dark:border-slate-100 pl-5 py-2 italic font-serif text-slate-700 dark:text-slate-300 my-6 bg-slate-50 dark:bg-slate-900/50 rounded-r-xl text-xl leading-relaxed;
+}
+
+.ProseMirror pre {
+  @apply bg-slate-950 text-slate-100 p-5 rounded-2xl font-mono text-sm my-6 overflow-x-auto border border-slate-800 shadow-inner;
+}
+
+.ProseMirror code {
+  @apply bg-slate-100 dark:bg-slate-800 text-red-600 dark:text-red-400 px-1.5 py-0.5 rounded-md font-mono text-sm font-medium;
+}
+
+.ProseMirror ul {
+  @apply list-disc list-outside pl-6 my-4 space-y-2 text-slate-700 dark:text-slate-300;
+}
+
+.ProseMirror ol {
+  @apply list-decimal list-outside pl-6 my-4 space-y-2 text-slate-700 dark:text-slate-300;
+}
+
+.ProseMirror img {
+  @apply rounded-2xl max-w-full h-auto my-6 shadow-lg mx-auto transition-all duration-300 hover:scale-[1.01];
+}
+
+.ProseMirror table {
+  @apply w-full border-collapse my-6 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800;
+}
+
+.ProseMirror th {
+  @apply bg-slate-100 dark:bg-slate-800/90 font-semibold p-3 text-left border border-slate-200 dark:border-slate-700 text-xs uppercase tracking-wider text-slate-600 dark:text-slate-300;
+}
+
+.ProseMirror td {
+  @apply p-3 border border-slate-200 dark:border-slate-800 text-sm text-slate-700 dark:text-slate-300;
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
