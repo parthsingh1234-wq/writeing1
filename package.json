@@ -4,6 +4,7 @@
   "description": "Article Vault - Production Full-Stack Editorial CMS & Publishing Platform",
   "main": "server/src/app.js",
   "scripts": {
+    "postinstall": "npm install --prefix client",
     "build": "npm run build --prefix client",
     "start": "node server/src/app.js",
     "server": "npm start --prefix server",
