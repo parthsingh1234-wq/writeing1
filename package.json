@@ -1,0 +1,24 @@
+{
+  "name": "article-vault",
+  "version": "1.0.0",
+  "description": "Article Vault - Production Full-Stack Editorial CMS & Publishing Platform",
+  "main": "server/src/app.js",
+  "scripts": {
+    "build": "npm run build --prefix client",
+    "start": "node server/src/app.js",
+    "server": "npm start --prefix server",
+    "client": "npm run dev --prefix client",
+    "seed": "node server/src/utils/seed.js"
+  },
+  "keywords": [
+    "cms",
+    "editorial",
+    "react",
+    "vite",
+    "express",
+    "mongodb",
+    "tiptap"
+  ],
+  "author": "Parth Singh",
+  "license": "MIT"
+}
