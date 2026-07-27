@@ -2,10 +2,21 @@ const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const path = require('path');
 
-const uploadDir = path.join(__dirname, '../../uploads');
+const getUploadDir = () => {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join('/tmp', 'uploads');
+  }
+  return path.join(__dirname, '../../uploads');
+};
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+const uploadDir = getUploadDir();
+
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn('Upload directory creation warning:', err.message);
 }
 
 let isCloudinaryConfigured = false;
