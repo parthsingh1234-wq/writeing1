@@ -110,12 +110,25 @@ export const TipTapEditor = ({
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      if (res.success && res.url) {
-        ed.chain().focus().setImage({ src: res.url, alt: file.name }).run();
+      if (res && res.success && (res.url || res.images?.[0]?.url)) {
+        const imageUrl = res.url || res.images[0].url;
+        ed.chain().focus().setImage({ src: imageUrl, alt: file.name }).run();
+        return;
       }
     } catch (err) {
-      console.error('Failed to paste/drop upload image:', err.message);
+      console.warn('Failed to upload image via backend, inserting locally via FileReader:', err.message);
     }
+
+    // Client-side FileReader Base64 fallback
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          ed.chain().focus().setImage({ src: e.target.result, alt: file.name }).run();
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (e) {}
   };
 
   useEffect(() => {

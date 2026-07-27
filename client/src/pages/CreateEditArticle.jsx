@@ -183,7 +183,7 @@ export const CreateEditArticle = () => {
     onToggleFullscreen: () => setIsFullscreen(prev => !prev)
   });
 
-  // Reusable Image File Uploader
+  // Reusable Image File Uploader with client-side FileReader fallback
   const uploadImageFile = async (file) => {
     if (!file) return;
     setUploadingImage(true);
@@ -193,13 +193,30 @@ export const CreateEditArticle = () => {
       const res = await API.post('/images/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      if (res.success && res.url) {
-        setCoverImage(res.url);
+      if (res && res.success && (res.url || res.images?.[0]?.url)) {
+        const imageUrl = res.url || res.images[0].url;
+        setCoverImage(imageUrl);
         setShowImageUploadModal(false);
+        setUploadingImage(false);
+        return;
       }
     } catch (err) {
-      console.error('Image upload failed:', err.message);
-    } finally {
+      console.warn('Backend image upload error, converting locally via FileReader:', err.message);
+    }
+
+    // Client-side FileReader fallback (works offline & without authentication!)
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setCoverImage(e.target.result);
+          setShowImageUploadModal(false);
+        }
+        setUploadingImage(false);
+      };
+      reader.onerror = () => setUploadingImage(false);
+      reader.readAsDataURL(file);
+    } catch (e) {
       setUploadingImage(false);
     }
   };

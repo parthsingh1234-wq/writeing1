@@ -21,7 +21,7 @@ const uploadImages = async (req, res) => {
         originalName: storageResult.originalName,
         mimeType: storageResult.mimeType,
         size: storageResult.size,
-        uploadedBy: req.user._id || req.user.id,
+        uploadedBy: req.user ? (req.user._id || req.user.id) : null,
         isUnused: true,
         isAvatar: req.query.isAvatar === 'true' || req.body.isAvatar === 'true' || req.body.isAvatar === true
       });
