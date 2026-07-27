@@ -47,4 +47,4 @@ const articleVersionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('ArticleVersion', articleVersionSchema);
+module.exports = mongoose.models.ArticleVersion || mongoose.model('ArticleVersion', articleVersionSchema);
