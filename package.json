@@ -2,7 +2,7 @@
   "name": "article-vault",
   "version": "1.0.0",
   "description": "Article Vault - Production Full-Stack Editorial CMS & Publishing Platform",
-  "main": "server/src/app.js",
+  "main": "api/index.js",
   "scripts": {
     "postinstall": "npm install --prefix client && npm install --prefix server",
     "build": "npm run build --prefix client",
