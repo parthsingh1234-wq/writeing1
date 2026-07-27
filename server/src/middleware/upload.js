@@ -2,9 +2,21 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const tempDir = path.join(__dirname, '../../temp_uploads');
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir, { recursive: true });
+const getTempDir = () => {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join('/tmp', 'temp_uploads');
+  }
+  return path.join(__dirname, '../../temp_uploads');
+};
+
+const tempDir = getTempDir();
+
+try {
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn('Temp upload dir creation warning:', err.message);
 }
 
 const storage = multer.diskStorage({
