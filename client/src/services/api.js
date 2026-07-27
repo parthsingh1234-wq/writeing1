@@ -24,13 +24,9 @@ API.interceptors.response.use(
   (response) => response.data,
   (error) => {
     const message = error.response?.data?.error || error.message || 'An unexpected error occurred';
-    if (error.response?.status === 401 && !window.location.pathname.includes('/login')) {
+    if (error.response?.status === 401) {
       localStorage.removeItem('vault_token');
       localStorage.removeItem('vault_user');
-      // Redirect to login if unauthenticated on protected route
-      if (!window.location.pathname.startsWith('/article/')) {
-        window.location.href = '/login';
-      }
     }
     return Promise.reject(new Error(message));
   }
