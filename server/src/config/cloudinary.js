@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const getUploadDir = () => {
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-    return path.join('/tmp', 'uploads');
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production') {
+    return '/tmp/uploads';
   }
   return path.join(__dirname, '../../uploads');
 };

@@ -3,8 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 const getTempDir = () => {
-  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-    return path.join('/tmp', 'temp_uploads');
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production') {
+    return '/tmp/temp_uploads';
   }
   return path.join(__dirname, '../../temp_uploads');
 };
