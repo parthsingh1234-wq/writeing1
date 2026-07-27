@@ -46,8 +46,8 @@ const AppContent = () => {
             {/* Protected Routes */}
             <Route path="/editor/new" element={<ProtectedRoute><CreateEditArticle /></ProtectedRoute>} />
             <Route path="/editor/:id" element={<ProtectedRoute><CreateEditArticle /></ProtectedRoute>} />
+            <Route path="/categories" element={<CategoriesTags />} />
             <Route path="/images" element={<ProtectedRoute><ImageLibrary /></ProtectedRoute>} />
-            <Route path="/categories" element={<ProtectedRoute><CategoriesTags /></ProtectedRoute>} />
             <Route path="/trash" element={<ProtectedRoute><Trash /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 

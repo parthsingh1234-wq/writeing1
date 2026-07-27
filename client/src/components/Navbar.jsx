@@ -103,110 +103,108 @@ export const Navbar = ({ onSearchChange, searchValue }) => {
             </button>
           </div>
 
+          <Link
+            to="/editor/new"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-semibold text-xs shadow-sm hover:shadow transition-all"
+          >
+            <PenSquare className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Write Story</span>
+          </Link>
+
           {isAuthenticated ? (
-            <>
-              <Link
-                to="/editor/new"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-semibold text-xs shadow-sm hover:shadow transition-all"
+            /* User Dropdown */
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
               >
-                <PenSquare className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Write Story</span>
-              </Link>
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-8 h-8 rounded-lg object-cover ring-2 ring-indigo-500/30"
+                />
+              </button>
 
-              {/* User Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+              {showProfileMenu && (
+                <div
+                  className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2"
+                  onMouseLeave={() => setShowProfileMenu(false)}
                 >
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-8 h-8 rounded-lg object-cover ring-2 ring-indigo-500/30"
-                  />
-                </button>
-
-                {showProfileMenu && (
-                  <div
-                    className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2"
-                    onMouseLeave={() => setShowProfileMenu(false)}
-                  >
-                    <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
-                      {isAdmin && (
-                        <span className="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                          System Admin
-                        </span>
-                      )}
-                    </div>
-
-                    <Link
-                      to="/profile"
-                      onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-                    >
-                      <User className="w-4 h-4" />
-                      <span>Profile & Settings</span>
-                    </Link>
-
-                    <Link
-                      to="/images"
-                      onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-                    >
-                      <ImageIcon className="w-4 h-4" />
-                      <span>Image Library</span>
-                    </Link>
-
-                    <Link
-                      to="/trash"
-                      onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Recycle Bin</span>
-                    </Link>
-
+                  <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
                     {isAdmin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setShowProfileMenu(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-amber-600 dark:text-amber-400 font-medium rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/40"
-                      >
-                        <Shield className="w-4 h-4" />
-                        <span>Admin Console</span>
-                      </Link>
+                      <span className="inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                        System Admin
+                      </span>
                     )}
-
-                    <div className="border-t border-slate-100 dark:border-slate-800 mt-1 pt-1">
-                      <button
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          logout();
-                          navigate('/login');
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
                   </div>
-                )}
-              </div>
-            </>
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setShowProfileMenu(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Profile & Settings</span>
+                  </Link>
+
+                  <Link
+                    to="/images"
+                    onClick={() => setShowProfileMenu(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    <span>Image Library</span>
+                  </Link>
+
+                  <Link
+                    to="/trash"
+                    onClick={() => setShowProfileMenu(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Recycle Bin</span>
+                  </Link>
+
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setShowProfileMenu(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-amber-600 dark:text-amber-400 font-medium rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/40"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin Console</span>
+                    </Link>
+                  )}
+
+                  <div className="border-t border-slate-100 dark:border-slate-800 mt-1 pt-1">
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        logout();
+                        navigate('/login');
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
                 Log In
               </Link>
               <Link
                 to="/register"
-                className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all"
+                className="px-4 py-2 text-xs font-semibold bg-red-700 hover:bg-red-800 text-white rounded-xl shadow-sm transition-all"
               >
                 Register
               </Link>
