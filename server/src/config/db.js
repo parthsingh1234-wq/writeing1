@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 let isInMemoryMode = false;
+let inMemoryStoreCache = null;
 
 // Path for persistent fallback JSON storage
 const dataDir = path.join(__dirname, '../../data');
