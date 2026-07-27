@@ -109,13 +109,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`🚀 Article Vault Server running on port ${PORT}`);
-  console.log(`🌍 Health Check: http://localhost:${PORT}/api/v1/health`);
-  console.log(`====================================================`);
-});
+if (require.main === module || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`🚀 Article Vault Server running on port ${PORT}`);
+    console.log(`🌍 Health Check: http://localhost:${PORT}/api/v1/health`);
+    console.log(`====================================================`);
+  });
+}
 
 module.exports = app;

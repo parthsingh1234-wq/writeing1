@@ -80,8 +80,8 @@ const connectDB = async () => {
   }
 
   isInMemoryMode = true;
-  initStore();
-  console.log(`Local DB Store ready at: ${storePath}`);
+  getStore();
+  console.log(`Local DB Store ready.`);
 };
 
 const isFallbackMode = () => {
