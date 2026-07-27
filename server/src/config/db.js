@@ -84,7 +84,11 @@ const connectDB = async () => {
   console.log(`Local DB Store ready at: ${storePath}`);
 };
 
-const isFallbackMode = () => isInMemoryMode;
+const isFallbackMode = () => {
+  if (!process.env.MONGODB_URI) return true;
+  if (mongoose.connection.readyState !== 1) return true;
+  return isInMemoryMode;
+};
 
 module.exports = {
   connectDB,
