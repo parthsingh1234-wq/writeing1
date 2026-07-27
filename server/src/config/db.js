@@ -18,7 +18,10 @@ const defaultData = {
 };
 
 // Ensure data folder and store file exist
-let inMemoryStoreCache = null;
+let bundledStore = defaultData;
+try {
+  bundledStore = require('../../data/store.json');
+} catch (e) {}
 
 const getStorePath = () => {
   if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
@@ -39,16 +42,8 @@ const getStore = () => {
     }
   } catch (err) {}
 
-  // Fallback to bundled seed store.json
-  try {
-    if (fs.existsSync(storePath)) {
-      const raw = fs.readFileSync(storePath, 'utf8');
-      inMemoryStoreCache = JSON.parse(raw);
-      return inMemoryStoreCache;
-    }
-  } catch (err) {}
-
-  inMemoryStoreCache = defaultData;
+  // Fallback to static bundled store
+  inMemoryStoreCache = JSON.parse(JSON.stringify(bundledStore || defaultData));
   return inMemoryStoreCache;
 };
 
