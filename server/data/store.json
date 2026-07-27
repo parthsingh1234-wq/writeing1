@@ -28,7 +28,7 @@
       "email": "parthsinghchauhan1234@gmail.com",
       "password": "$2a$10$eXnbwNLWgLxSq9T92Fmq3uS6jwIjGku9tXyhfnFMZK.rglHEHJbNS",
       "role": "admin",
-      "avatar": "http://localhost:5000/uploads/1785081446980-IMG_20250512_183846_2.jpg",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200",
       "bio": "Chief Admin",
       "createdAt": "2026-07-24T18:43:22.224Z",
       "updatedAt": "2026-07-26T15:57:28.123Z"

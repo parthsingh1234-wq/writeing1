@@ -56,20 +56,40 @@ const saveImageFile = async (file, hostUrl) => {
     }
   }
 
-  // Local storage fallback
-  const filename = `${Date.now()}-${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-  const targetPath = path.join(uploadDir, filename);
+  // Base64 Data URL fallback for cloud & serverless compatibility (ensures images work on mobile & Vercel)
+  try {
+    const fileBuffer = fs.readFileSync(file.path);
+    const base64Data = fileBuffer.toString('base64');
+    const dataUrl = `data:${file.mimetype || 'image/jpeg'};base64,${base64Data}`;
+    
+    // Clean up temp file
+    if (fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
 
-  fs.renameSync(file.path, targetPath);
-
-  const fileUrl = `${hostUrl}/uploads/${filename}`;
-  return {
-    url: fileUrl,
-    publicId: filename,
-    size: file.size,
-    mimeType: file.mimetype,
-    originalName: file.originalname
-  };
+    const uniqueId = `img_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    return {
+      url: dataUrl,
+      publicId: uniqueId,
+      size: file.size,
+      mimeType: file.mimetype,
+      originalName: file.originalname
+    };
+  } catch (err) {
+    console.error('Base64 image conversion error:', err);
+    const filename = `${Date.now()}-${file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const targetPath = path.join(uploadDir, filename);
+    if (fs.existsSync(file.path)) {
+      try { fs.renameSync(file.path, targetPath); } catch (e) {}
+    }
+    return {
+      url: `${hostUrl}/uploads/${filename}`,
+      publicId: filename,
+      size: file.size,
+      mimeType: file.mimetype,
+      originalName: file.originalname
+    };
+  }
 };
 
 const deleteImageFile = async (publicId) => {
