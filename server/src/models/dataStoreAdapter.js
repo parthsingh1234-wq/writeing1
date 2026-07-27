@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { isFallbackMode, getStore, saveStore } = require('../config/db');
 const User = require('./User');
 const Article = require('./Article');
@@ -146,13 +147,17 @@ const dbAdapter = {
   },
 
   async findArticleByIdOrSlug(identifier) {
+    if (!identifier) return null;
     if (!isFallbackMode()) {
       const isId = mongoose.Types.ObjectId.isValid(identifier);
-      const filter = isId ? { _id: identifier } : { slug: identifier };
-      return await Article.findOne(filter).populate('author', 'name email avatar').populate('category').populate('tags');
+      let article = await Article.findOne({ slug: identifier }).populate('author', 'name email avatar').populate('category').populate('tags');
+      if (!article && isId) {
+        article = await Article.findById(identifier).populate('author', 'name email avatar').populate('category').populate('tags');
+      }
+      return article;
     }
     const store = getStore();
-    const article = store.articles.find(a => a._id === identifier || a.slug === identifier);
+    const article = store.articles.find(a => a.slug === identifier || a._id === identifier || a.id === identifier);
     return populateArticle(article, store);
   },
 
