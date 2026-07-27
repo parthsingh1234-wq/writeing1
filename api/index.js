@@ -26,23 +26,37 @@ const seedData = require('../server/src/utils/seed');
 
 connectDB().then(() => seedData()).catch(() => {});
 
-// URL normalization for Vercel Serverless Function rewrites
-app.use((req, res, next) => {
-  if (req.url.startsWith('/v1/')) {
-    req.url = '/api' + req.url;
-  }
-  next();
-});
+const authRoutes = require('../server/src/routes/authRoutes');
+const articleRoutes = require('../server/src/routes/articleRoutes');
+const categoryRoutes = require('../server/src/routes/categoryRoutes');
+const tagRoutes = require('../server/src/routes/tagRoutes');
+const imageRoutes = require('../server/src/routes/imageRoutes');
+const dashboardRoutes = require('../server/src/routes/dashboardRoutes');
+const adminRoutes = require('../server/src/routes/adminRoutes');
 
-app.use('/api/v1/auth', require('../server/src/routes/authRoutes'));
-app.use('/api/v1/articles', require('../server/src/routes/articleRoutes'));
-app.use('/api/v1/categories', require('../server/src/routes/categoryRoutes'));
-app.use('/api/v1/tags', require('../server/src/routes/tagRoutes'));
-app.use('/api/v1/images', require('../server/src/routes/imageRoutes'));
-app.use('/api/v1/dashboard', require('../server/src/routes/dashboardRoutes'));
-app.use('/api/v1/admin', require('../server/src/routes/adminRoutes'));
+// Mount routes for dual path compatibility (/api/v1/* and /*)
+app.use('/api/v1/auth', authRoutes);
+app.use('/auth', authRoutes);
 
-app.get('/api/v1/health', (req, res) => {
+app.use('/api/v1/articles', articleRoutes);
+app.use('/articles', articleRoutes);
+
+app.use('/api/v1/categories', categoryRoutes);
+app.use('/categories', categoryRoutes);
+
+app.use('/api/v1/tags', tagRoutes);
+app.use('/tags', tagRoutes);
+
+app.use('/api/v1/images', imageRoutes);
+app.use('/images', imageRoutes);
+
+app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/dashboard', dashboardRoutes);
+
+app.use('/api/v1/admin', adminRoutes);
+app.use('/admin', adminRoutes);
+
+app.get(['/api/v1/health', '/health'], (req, res) => {
   res.status(200).json({ success: true, status: 'Healthy', timestamp: new Date().toISOString() });
 });
 
