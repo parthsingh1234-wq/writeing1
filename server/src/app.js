@@ -66,6 +66,14 @@ app.use('/api/v1/auth/forgot-password', authLimiter);
 // Serve static uploaded files fallback
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Normalize Vercel Serverless Function route URLs
+app.use((req, res, next) => {
+  if (req.url.startsWith('/v1/')) {
+    req.url = '/api' + req.url;
+  }
+  next();
+});
+
 // API Routes Registration
 app.use('/api/v1/auth', require('./routes/authRoutes'));
 app.use('/api/v1/articles', require('./routes/articleRoutes'));
