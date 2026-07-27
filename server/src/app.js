@@ -15,12 +15,8 @@ const seedData = require('./utils/seed');
 // Initialize Express app
 const app = express();
 
-// Connect Database & seed initial data safely
-connectDB().then(() => {
-  return seedData();
-}).catch(err => {
-  console.warn('Initialization seed warning:', err.message);
-});
+// Connect Database safely
+connectDB().catch(() => {});
 
 // Security Middlewares with Strict Security Headers
 app.use(helmet({

@@ -27,9 +27,7 @@ try {
   });
 
   const { connectDB } = require('../server/src/config/db');
-  const seedData = require('../server/src/utils/seed');
-
-  connectDB().then(() => seedData()).catch(() => {});
+  connectDB().catch(() => {});
 
   const authRoutes = require('../server/src/routes/authRoutes');
   const articleRoutes = require('../server/src/routes/articleRoutes');
