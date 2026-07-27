@@ -1,26 +1,12 @@
-const sanitizeHtml = require('sanitize-html');
-
-// HTML sanitization options for TipTap output
-const sanitizeOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-    'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'u', 's', 'strike',
-    'sub', 'sup', 'mark', 'span', 'figure', 'figcaption',
-    'table', 'thead', 'tbody', 'tr', 'th', 'td', 'code', 'pre'
-  ]),
-  allowedAttributes: {
-    ...sanitizeHtml.defaults.allowedAttributes,
-    '*': ['style', 'class', 'id', 'data-*'],
-    'img': ['src', 'alt', 'title', 'width', 'height', 'loading'],
-    'a': ['href', 'name', 'target', 'rel'],
-    'td': ['colspan', 'rowspan'],
-    'th': ['colspan', 'rowspan']
-  },
-  allowedSchemes: ['http', 'https', 'data']
-};
-
+// Lightweight, zero-dependency HTML sanitizer for TipTap/Quill output
 const cleanHtml = (html) => {
   if (!html) return '';
-  return sanitizeHtml(html, sanitizeOptions);
+  if (typeof html !== 'string') return '';
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+    .replace(/on\w+='[^']*'/gi, '');
 };
 
 const calculateReadingTime = (text) => {
@@ -32,7 +18,7 @@ const calculateReadingTime = (text) => {
 };
 
 const generateSlug = (title) => {
-  const baseSlug = title
+  const baseSlug = (title || 'article')
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '')
