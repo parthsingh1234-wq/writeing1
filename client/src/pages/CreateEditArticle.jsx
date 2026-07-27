@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import API from '../services/api';
+import { compressImageFile } from '../utils/imageCompressor';
 import { TipTapEditor } from '../components/Editor/TipTapEditor';
 import { VersionHistoryModal } from '../components/VersionHistoryModal';
 import { useAutosave } from '../hooks/useAutosave';
@@ -183,10 +184,11 @@ export const CreateEditArticle = () => {
     onToggleFullscreen: () => setIsFullscreen(prev => !prev)
   });
 
-  // Reusable Image File Uploader with client-side FileReader fallback
-  const uploadImageFile = async (file) => {
-    if (!file) return;
+  // Reusable Image File Uploader with client-side compression & FileReader fallback
+  const uploadImageFile = async (rawFile) => {
+    if (!rawFile) return;
     setUploadingImage(true);
+    const file = await compressImageFile(rawFile);
     try {
       const formData = new FormData();
       formData.append('images', file);

@@ -16,6 +16,7 @@ import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorToolbar } from './EditorToolbar';
 import API from '../../services/api';
+import { compressImageFile } from '../../utils/imageCompressor';
 
 export const TipTapEditor = ({
   content,
@@ -101,7 +102,9 @@ export const TipTapEditor = ({
     }
   });
 
-  const uploadAndInsertImage = async (file, ed) => {
+  const uploadAndInsertImage = async (rawFile, ed) => {
+    if (!rawFile) return;
+    const file = await compressImageFile(rawFile);
     try {
       const formData = new FormData();
       formData.append('images', file);
