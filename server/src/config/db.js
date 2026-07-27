@@ -18,28 +18,52 @@ const defaultData = {
 };
 
 // Ensure data folder and store file exist
-const initStore = () => {
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+let inMemoryStoreCache = null;
+
+const getStorePath = () => {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    return path.join('/tmp', 'store.json');
   }
-  if (!fs.existsSync(storePath)) {
-    fs.writeFileSync(storePath, JSON.stringify(defaultData, null, 2));
-  }
+  return storePath;
 };
 
 const getStore = () => {
-  initStore();
+  if (inMemoryStoreCache) return inMemoryStoreCache;
+  
+  const targetPath = getStorePath();
   try {
-    const raw = fs.readFileSync(storePath, 'utf8');
-    return JSON.parse(raw);
-  } catch (err) {
-    return defaultData;
-  }
+    if (fs.existsSync(targetPath)) {
+      const raw = fs.readFileSync(targetPath, 'utf8');
+      inMemoryStoreCache = JSON.parse(raw);
+      return inMemoryStoreCache;
+    }
+  } catch (err) {}
+
+  // Fallback to bundled seed store.json
+  try {
+    if (fs.existsSync(storePath)) {
+      const raw = fs.readFileSync(storePath, 'utf8');
+      inMemoryStoreCache = JSON.parse(raw);
+      return inMemoryStoreCache;
+    }
+  } catch (err) {}
+
+  inMemoryStoreCache = defaultData;
+  return inMemoryStoreCache;
 };
 
 const saveStore = (data) => {
-  initStore();
-  fs.writeFileSync(storePath, JSON.stringify(data, null, 2));
+  inMemoryStoreCache = data;
+  const targetPath = getStorePath();
+  try {
+    const dir = path.dirname(targetPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(targetPath, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.warn(`File store write warning (${err.message}). Retaining state in memory.`);
+  }
 };
 
 const connectDB = async () => {

@@ -39,7 +39,7 @@ export const Login = () => {
         {error && (
           <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
+            <span>{typeof error === 'string' ? error : (error.message || 'Invalid credentials. Please try again.')}</span>
           </div>
         )}
 
