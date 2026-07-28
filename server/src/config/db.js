@@ -47,6 +47,7 @@ const syncUserActualImages = (storeObj) => {
 
 const getStore = () => {
   if (inMemoryStoreCache && inMemoryStoreCache.articles && inMemoryStoreCache.articles.length > 0) {
+    syncUserActualImages(inMemoryStoreCache);
     return inMemoryStoreCache;
   }
   
@@ -57,6 +58,7 @@ const getStore = () => {
       const loaded = JSON.parse(raw);
       if (loaded && Array.isArray(loaded.articles) && loaded.articles.length > 0) {
         inMemoryStoreCache = loaded;
+        syncUserActualImages(inMemoryStoreCache);
         return inMemoryStoreCache;
       }
     }
@@ -64,6 +66,7 @@ const getStore = () => {
 
   // Fallback to static bundled store if disk store is empty or invalid
   inMemoryStoreCache = JSON.parse(JSON.stringify(bundledStore || defaultData));
+  syncUserActualImages(inMemoryStoreCache);
   saveStore(inMemoryStoreCache);
   return inMemoryStoreCache;
 };
