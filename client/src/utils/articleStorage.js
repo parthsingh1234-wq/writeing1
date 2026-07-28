@@ -14,6 +14,17 @@ export const savePublishedArticleLocally = (article) => {
   }
 };
 
+export const removePublishedArticleLocally = (targetId) => {
+  if (!targetId) return;
+  try {
+    const existing = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    const updated = existing.filter(a => (a._id !== targetId && a.id !== targetId && a.slug !== targetId));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.warn('Could not remove article from local storage:', e.message);
+  }
+};
+
 export const getMergedArticles = (serverArticles = []) => {
   try {
     const localSaved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');

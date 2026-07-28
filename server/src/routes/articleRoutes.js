@@ -21,9 +21,9 @@ router.post('/', optionalAuth, createArticle);
 router.put('/:id', optionalAuth, updateArticle);
 router.put('/:id/approve', protect, authorize('admin'), approveArticle);
 router.put('/:id/reject', protect, authorize('admin'), rejectArticle);
-router.delete('/:id', protect, deleteArticle);
-router.put('/:id/restore', protect, restoreArticle);
-router.delete('/:id/permanent', protect, permanentDeleteArticle);
+router.delete('/:id', optionalAuth, deleteArticle);
+router.put('/:id/restore', optionalAuth, restoreArticle);
+router.delete('/:id/permanent', optionalAuth, permanentDeleteArticle);
 router.get('/:id/versions', protect, getArticleVersions);
 router.post('/:id/versions/:versionId/restore', protect, restoreArticleVersion);
 

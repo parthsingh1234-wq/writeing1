@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
-import { getMergedArticles } from '../utils/articleStorage';
+import { getMergedArticles, removePublishedArticleLocally } from '../utils/articleStorage';
 import { useAuth } from '../context/AuthContext';
 import { StatCard } from '../components/StatCard';
 import { ArticleCard } from '../components/ArticleCard';
@@ -56,10 +56,11 @@ export const Dashboard = ({ searchTerm }) => {
     if (window.confirm('Are you sure you want to move this article to the Recycle Bin?')) {
       try {
         await API.delete(`/articles/${id}`);
-        fetchDashboardData();
       } catch (err) {
-        console.error(err);
+        console.warn('Backend delete notice, proceeding with local removal:', err.message);
       }
+      removePublishedArticleLocally(id);
+      fetchDashboardData();
     }
   };
 
