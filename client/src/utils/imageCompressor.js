@@ -1,11 +1,10 @@
 // Client-side HTML5 Canvas Image Compressor for fast, reliable system uploads
 export const compressImageFile = (file, maxDimension = 1200, quality = 0.8) => {
   return new Promise((resolve) => {
-    if (!file || !file.type.startsWith('image/')) {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
       return resolve(file);
     }
 
-    // Skip small images already under 300KB
     if (file.size < 300 * 1024) {
       return resolve(file);
     }
@@ -56,5 +55,46 @@ export const compressImageFile = (file, maxDimension = 1200, quality = 0.8) => {
     reader.onerror = () => resolve(file);
 
     reader.readAsDataURL(file);
+  });
+};
+
+// Compress heavy Base64 string data URLs to lightweight JPEG Data URLs
+export const compressBase64Image = (base64Str, maxDimension = 1000, quality = 0.75) => {
+  return new Promise((resolve) => {
+    if (!base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:image/')) {
+      return resolve(base64Str);
+    }
+
+    if (base64Str.length < 300 * 1024) {
+      return resolve(base64Str);
+    }
+
+    const img = new window.Image();
+    img.src = base64Str;
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      const compressed = canvas.toDataURL('image/jpeg', quality);
+      resolve(compressed);
+    };
+
+    img.onerror = () => resolve(base64Str);
   });
 };
