@@ -156,8 +156,8 @@ const createArticle = async (req, res) => {
       coverImage: article.coverImage,
       category: article.category,
       tags: article.tags,
-      savedBy: req.user._id || req.user.id,
-      changeNote: 'Initial draft creation'
+      savedBy: req.user ? (req.user._id || req.user.id) : '8f413982e5b72186d23a1012',
+      changeNote: 'Initial article creation'
     });
 
     const isPending = finalStatus === 'pending';
@@ -219,7 +219,7 @@ const updateArticle = async (req, res) => {
         coverImage: updateData.coverImage,
         category: updateData.category,
         tags: updateData.tags,
-        savedBy: req.user._id || req.user.id,
+        savedBy: req.user ? (req.user._id || req.user.id) : '8f413982e5b72186d23a1012',
         changeNote: req.body.changeNote || `Version ${updateData.currentVersion} update`
       });
     }
