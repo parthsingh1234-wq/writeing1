@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../services/api';
+import { getMergedArticles } from '../utils/articleStorage';
 import { useAuth } from '../context/AuthContext';
 import { TOC } from '../components/TOC';
 import { exportAsMarkdown, exportAsHTML, exportAsDOCX, printArticle } from '../utils/exportUtils';
@@ -24,17 +25,25 @@ export const ArticleViewer = () => {
         const hasViewed = sessionStorage.getItem(`vault_viewed_${idOrSlug}`);
         const queryParam = !hasViewed ? '?incrementView=true' : '';
         const res = await API.get(`/articles/${idOrSlug}${queryParam}`);
-        if (res.success && res.article) {
+        if (res && res.success && res.article) {
           setArticle(res.article);
           if (!hasViewed) {
             sessionStorage.setItem(`vault_viewed_${idOrSlug}`, 'true');
           }
+          setLoading(false);
+          return;
         }
       } catch (err) {
-        console.error('Failed to load article:', err.message);
-      } finally {
-        setLoading(false);
+        console.warn('Backend fetch for article failed, checking local store:', err.message);
       }
+
+      // Local fallback for 100% stability
+      const merged = getMergedArticles([]);
+      const localArt = merged.find(a => a._id === idOrSlug || a.id === idOrSlug || a.slug === idOrSlug);
+      if (localArt) {
+        setArticle(localArt);
+      }
+      setLoading(false);
     };
     fetchArticle();
   }, [idOrSlug]);

@@ -108,16 +108,21 @@ export const CreateEditArticle = () => {
     }
 
     try {
+      let res;
       if (articleId) {
-        await API.put(`/articles/${articleId}`, payload);
+        res = await API.put(`/articles/${articleId}`, payload);
       } else {
-        const res = await API.post('/articles', payload);
-        if (res.success && res.article) {
+        res = await API.post('/articles', payload);
+        if (res && res.success && res.article) {
           const newId = res.article._id || res.article.id;
           setArticleId(newId);
           // Update URL silently without full reload
           window.history.replaceState(null, '', `/editor/${newId}`);
         }
+      }
+
+      if (res && res.article) {
+        savePublishedArticleLocally(res.article);
       }
     } catch (err) {
       console.error('Save failed:', err.message);
