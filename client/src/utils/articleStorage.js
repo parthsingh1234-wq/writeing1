@@ -5,8 +5,9 @@ export const savePublishedArticleLocally = (article) => {
   if (!article) return;
   try {
     const existing = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
-    const key = article._id || article.id || article.slug;
-    const filtered = existing.filter(a => (a._id || a.id || a.slug) !== key);
+    const getNormKey = (a) => (a._id || a.id || a.slug || a.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const targetKey = getNormKey(article);
+    const filtered = existing.filter(a => getNormKey(a) !== targetKey);
     const updated = [article, ...filtered];
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
   } catch (e) {
@@ -30,25 +31,32 @@ export const getMergedArticles = (serverArticles = []) => {
     const localSaved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
     const map = new Map();
 
-    // Insert server articles
+    const getNormKey = (a) => {
+      if (!a) return '';
+      return (a.slug || a.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    };
+
+    // Server articles are authoritative
     if (Array.isArray(serverArticles)) {
       serverArticles.forEach(a => {
-        const key = a._id || a.id || a.slug;
-        if (key) map.set(key, a);
+        const normKey = getNormKey(a);
+        if (normKey) map.set(normKey, a);
       });
     }
 
-    // Insert local saved articles if missing from server response
+    // Insert local saved articles ONLY if missing from server response
     if (Array.isArray(localSaved)) {
       localSaved.forEach(a => {
-        const key = a._id || a.id || a.slug;
-        if (key && !map.has(key)) {
-          map.set(key, a);
+        const normKey = getNormKey(a);
+        if (normKey && !map.has(normKey)) {
+          map.set(normKey, a);
         }
       });
     }
 
     return Array.from(map.values()).sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
       const dateA = new Date(a.createdAt || a.updatedAt || Date.now());
       const dateB = new Date(b.createdAt || b.updatedAt || Date.now());
       return dateB - dateA;
