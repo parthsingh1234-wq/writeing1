@@ -31,23 +31,8 @@ const getStorePath = () => {
   return storePath;
 };
 
-const syncUserActualImages = (storeObj) => {
-  if (!storeObj || !storeObj.articles || !bundledStore || !bundledStore.articles) return;
-  const targetArt = storeObj.articles.find(a => a._id === '92d09d80c94b8136e508ffbe');
-  const bundledArt = bundledStore.articles.find(a => a._id === '92d09d80c94b8136e508ffbe');
-  if (targetArt && bundledArt) {
-    if (targetArt.coverImage !== bundledArt.coverImage) {
-      targetArt.coverImage = bundledArt.coverImage;
-    }
-    if (targetArt.content !== bundledArt.content) {
-      targetArt.content = bundledArt.content;
-    }
-  }
-};
-
 const getStore = () => {
   if (inMemoryStoreCache && inMemoryStoreCache.articles && inMemoryStoreCache.articles.length > 0) {
-    syncUserActualImages(inMemoryStoreCache);
     return inMemoryStoreCache;
   }
   
@@ -58,7 +43,6 @@ const getStore = () => {
       const loaded = JSON.parse(raw);
       if (loaded && Array.isArray(loaded.articles) && loaded.articles.length > 0) {
         inMemoryStoreCache = loaded;
-        syncUserActualImages(inMemoryStoreCache);
         return inMemoryStoreCache;
       }
     }
@@ -66,7 +50,6 @@ const getStore = () => {
 
   // Fallback to static bundled store if disk store is empty or invalid
   inMemoryStoreCache = JSON.parse(JSON.stringify(bundledStore || defaultData));
-  syncUserActualImages(inMemoryStoreCache);
   saveStore(inMemoryStoreCache);
   return inMemoryStoreCache;
 };
