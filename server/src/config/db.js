@@ -54,6 +54,23 @@ const getStore = () => {
   return inMemoryStoreCache;
 };
 
+const { exec } = require('child_process');
+
+let lastGitPushTime = 0;
+
+const triggerAutoGitPush = () => {
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') return;
+  const now = Date.now();
+  if (now - lastGitPushTime < 10000) return;
+  lastGitPushTime = now;
+
+  exec('git add server/data/store.json && git commit -m "Auto-sync store changes to Vercel" && git push origin main', (err) => {
+    if (!err) {
+      console.log('Auto git sync completed: store.json pushed to GitHub main branch for Vercel deployment.');
+    }
+  });
+};
+
 const saveStore = (data) => {
   inMemoryStoreCache = data;
   const targetPath = getStorePath();
@@ -63,6 +80,7 @@ const saveStore = (data) => {
       fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(targetPath, JSON.stringify(data, null, 2));
+    triggerAutoGitPush();
   } catch (err) {
     console.warn(`File store write warning (${err.message}). Retaining state in memory.`);
   }
