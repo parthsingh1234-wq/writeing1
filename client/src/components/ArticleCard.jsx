@@ -122,7 +122,7 @@ export const ArticleCard = ({ article, onDelete, onRestore, onApprove, onReject,
                 <Trash2 className="w-4 h-4" />
               </button>
             </>
-          ) : (
+          ) : isAdmin ? (
             <>
               <Link
                 to={`/editor/${article._id || article.id}`}
@@ -139,7 +139,7 @@ export const ArticleCard = ({ article, onDelete, onRestore, onApprove, onReject,
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </article>
