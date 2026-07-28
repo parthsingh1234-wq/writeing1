@@ -181,7 +181,7 @@ const dbAdapter = {
   async updateArticle(id, data) {
     if (!isFallbackMode()) return await Article.findByIdAndUpdate(id, data, { new: true });
     const store = getStore();
-    const index = store.articles.findIndex(a => a._id === id);
+    const index = store.articles.findIndex(a => a._id === id || a.id === id || a.slug === id);
     if (index === -1) return null;
     store.articles[index] = { ...store.articles[index], ...data, updatedAt: new Date().toISOString() };
     saveStore(store);
@@ -194,10 +194,11 @@ const dbAdapter = {
       return await Article.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     }
     const store = getStore();
+    const isMatch = (a) => (a._id === id || a.id === id || a.slug === id);
     if (hardDelete) {
-      store.articles = store.articles.filter(a => a._id !== id);
+      store.articles = store.articles.filter(a => !isMatch(a));
     } else {
-      const index = store.articles.findIndex(a => a._id === id);
+      const index = store.articles.findIndex(isMatch);
       if (index !== -1) store.articles[index].isDeleted = true;
     }
     saveStore(store);
