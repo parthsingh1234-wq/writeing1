@@ -54,12 +54,13 @@ export const Dashboard = ({ searchTerm }) => {
 
   const handleDeleteArticle = async (id) => {
     if (window.confirm('Are you sure you want to move this article to the Recycle Bin?')) {
+      const targetArt = allArticles.find(a => a._id === id || a.id === id || a.slug === id);
       try {
         await API.delete(`/articles/${id}`);
       } catch (err) {
         console.warn('Backend delete notice, proceeding with local removal:', err.message);
       }
-      removePublishedArticleLocally(id);
+      removePublishedArticleLocally(targetArt || id);
       fetchDashboardData();
     }
   };
