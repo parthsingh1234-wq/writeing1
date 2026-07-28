@@ -173,7 +173,7 @@ const dbAdapter = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    store.articles.push(newArticle);
+    store.articles.unshift(newArticle);
     saveStore(store);
     return populateArticle(newArticle, store);
   },

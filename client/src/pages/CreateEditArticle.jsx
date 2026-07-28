@@ -180,6 +180,13 @@ export const CreateEditArticle = () => {
         subtitle,
         content,
         coverImage: optimizedCoverImage,
+        category: categories.find(c => (c._id || c.id) === categoryId) || null,
+        tags: tags.filter(t => selectedTagIds.includes(t._id || t.id)),
+        author: {
+          name: 'Parth Singh',
+          avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200',
+          role: 'admin'
+        },
         status: 'published',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
