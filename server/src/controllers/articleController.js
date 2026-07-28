@@ -246,7 +246,7 @@ const deleteArticle = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Article not found' });
     }
 
-    await dbAdapter.deleteArticle(article._id || article.id, false);
+    await dbAdapter.deleteArticle(article._id || article.id || article.slug, true);
     res.status(200).json({ success: true, message: 'Article moved to Recycle Bin' });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
