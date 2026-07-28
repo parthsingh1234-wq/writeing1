@@ -28,39 +28,24 @@ export const removePublishedArticleLocally = (targetId) => {
 
 export const getMergedArticles = (serverArticles = []) => {
   try {
+    // If server articles are available, clear local stale items and use authoritative server list
+    if (Array.isArray(serverArticles) && serverArticles.length > 0) {
+      try {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+      } catch (e) {}
+
+      return [...serverArticles].sort((a, b) => {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        const dateA = new Date(a.createdAt || a.updatedAt || Date.now());
+        const dateB = new Date(b.createdAt || b.updatedAt || Date.now());
+        return dateB - dateA;
+      });
+    }
+
+    // Offline fallback
     const localSaved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
-    const map = new Map();
-
-    const getNormKey = (a) => {
-      if (!a) return '';
-      return (a.slug || a.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    };
-
-    // Server articles are authoritative
-    if (Array.isArray(serverArticles)) {
-      serverArticles.forEach(a => {
-        const normKey = getNormKey(a);
-        if (normKey) map.set(normKey, a);
-      });
-    }
-
-    // Insert local saved articles ONLY if missing from server response
-    if (Array.isArray(localSaved)) {
-      localSaved.forEach(a => {
-        const normKey = getNormKey(a);
-        if (normKey && !map.has(normKey)) {
-          map.set(normKey, a);
-        }
-      });
-    }
-
-    return Array.from(map.values()).sort((a, b) => {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      const dateA = new Date(a.createdAt || a.updatedAt || Date.now());
-      const dateB = new Date(b.createdAt || b.updatedAt || Date.now());
-      return dateB - dateA;
-    });
+    return Array.isArray(localSaved) ? localSaved : [];
   } catch (e) {
     return Array.isArray(serverArticles) ? serverArticles : [];
   }
