@@ -46,8 +46,7 @@ const syncUserActualImages = (storeObj) => {
 };
 
 const getStore = () => {
-  if (inMemoryStoreCache) {
-    syncUserActualImages(inMemoryStoreCache);
+  if (inMemoryStoreCache && inMemoryStoreCache.articles && inMemoryStoreCache.articles.length > 0) {
     return inMemoryStoreCache;
   }
   
@@ -55,15 +54,17 @@ const getStore = () => {
   try {
     if (fs.existsSync(targetPath)) {
       const raw = fs.readFileSync(targetPath, 'utf8');
-      inMemoryStoreCache = JSON.parse(raw);
-      syncUserActualImages(inMemoryStoreCache);
-      return inMemoryStoreCache;
+      const loaded = JSON.parse(raw);
+      if (loaded && Array.isArray(loaded.articles) && loaded.articles.length > 0) {
+        inMemoryStoreCache = loaded;
+        return inMemoryStoreCache;
+      }
     }
   } catch (err) {}
 
-  // Fallback to static bundled store
+  // Fallback to static bundled store if disk store is empty or invalid
   inMemoryStoreCache = JSON.parse(JSON.stringify(bundledStore || defaultData));
-  syncUserActualImages(inMemoryStoreCache);
+  saveStore(inMemoryStoreCache);
   return inMemoryStoreCache;
 };
 
