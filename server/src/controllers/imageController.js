@@ -42,7 +42,7 @@ const uploadImages = async (req, res) => {
 // @route   GET /api/v1/images
 const getImages = async (req, res) => {
   try {
-    const userId = req.user._id || req.user.id;
+    const userId = req.user ? (req.user._id || req.user.id) : null;
     const images = await dbAdapter.getImages(userId);
     res.status(200).json({ success: true, images });
   } catch (err) {
