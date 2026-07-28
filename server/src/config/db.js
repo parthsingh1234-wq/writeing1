@@ -31,20 +31,39 @@ const getStorePath = () => {
   return storePath;
 };
 
+const syncUserActualImages = (storeObj) => {
+  if (!storeObj || !storeObj.articles || !bundledStore || !bundledStore.articles) return;
+  const targetArt = storeObj.articles.find(a => a._id === '92d09d80c94b8136e508ffbe');
+  const bundledArt = bundledStore.articles.find(a => a._id === '92d09d80c94b8136e508ffbe');
+  if (targetArt && bundledArt) {
+    if (targetArt.coverImage !== bundledArt.coverImage) {
+      targetArt.coverImage = bundledArt.coverImage;
+    }
+    if (targetArt.content !== bundledArt.content) {
+      targetArt.content = bundledArt.content;
+    }
+  }
+};
+
 const getStore = () => {
-  if (inMemoryStoreCache) return inMemoryStoreCache;
+  if (inMemoryStoreCache) {
+    syncUserActualImages(inMemoryStoreCache);
+    return inMemoryStoreCache;
+  }
   
   const targetPath = getStorePath();
   try {
     if (fs.existsSync(targetPath)) {
       const raw = fs.readFileSync(targetPath, 'utf8');
       inMemoryStoreCache = JSON.parse(raw);
+      syncUserActualImages(inMemoryStoreCache);
       return inMemoryStoreCache;
     }
   } catch (err) {}
 
   // Fallback to static bundled store
   inMemoryStoreCache = JSON.parse(JSON.stringify(bundledStore || defaultData));
+  syncUserActualImages(inMemoryStoreCache);
   return inMemoryStoreCache;
 };
 
