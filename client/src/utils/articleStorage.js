@@ -53,22 +53,41 @@ export const removePublishedArticleLocally = (target) => {
 
 export const getMergedArticles = (serverArticles = []) => {
   try {
+    const localSaved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
     const deletedList = JSON.parse(localStorage.getItem(DELETED_KEYS_STORAGE_KEY) || '[]');
+    const map = new Map();
+
     const isDeletedLocal = (a) => {
       if (!a) return true;
       const keys = [a._id, a.id, a.slug, a.title, getNormKey(a)].filter(Boolean);
       return keys.some(k => deletedList.includes(k));
     };
 
-    let list = Array.isArray(serverArticles) ? serverArticles : [];
-    if (list.length === 0) {
-      list = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+    // 1. Include authoritative server articles
+    if (Array.isArray(serverArticles)) {
+      serverArticles.forEach(a => {
+        if (!a.isDeleted && !isDeletedLocal(a)) {
+          const normKey = getNormKey(a);
+          if (normKey) map.set(normKey, a);
+        }
+      });
     }
 
-    // Always filter out blacklisted deleted articles
-    const validList = list.filter(a => !a.isDeleted && !isDeletedLocal(a));
+    // 2. Include locally published articles
+    if (Array.isArray(localSaved)) {
+      localSaved.forEach(a => {
+        if (!a.isDeleted && !isDeletedLocal(a)) {
+          const normKey = getNormKey(a);
+          if (normKey && !map.has(normKey)) {
+            map.set(normKey, a);
+          }
+        }
+      });
+    }
 
-    return validList.sort((a, b) => {
+    const result = Array.from(map.values());
+
+    return result.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
       const dateA = new Date(a.createdAt || a.updatedAt || Date.now());
