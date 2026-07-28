@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import API from '../services/api';
 import { compressImageFile } from '../utils/imageCompressor';
+import { savePublishedArticleLocally } from '../utils/articleStorage';
 import { TipTapEditor } from '../components/Editor/TipTapEditor';
 import { VersionHistoryModal } from '../components/VersionHistoryModal';
 import { useAutosave } from '../hooks/useAutosave';
@@ -157,6 +158,10 @@ export const CreateEditArticle = () => {
       } else {
         res = await API.post('/articles', payload);
         if (res.success) setArticleId(res.article._id || res.article.id);
+      }
+
+      if (res && res.article) {
+        savePublishedArticleLocally(res.article);
       }
 
       if (res && res.message) {

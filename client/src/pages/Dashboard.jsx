@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
+import { getMergedArticles } from '../utils/articleStorage';
 import { useAuth } from '../context/AuthContext';
 import { StatCard } from '../components/StatCard';
 import { ArticleCard } from '../components/ArticleCard';
@@ -28,10 +29,20 @@ export const Dashboard = ({ searchTerm }) => {
         API.get('/articles')
       ]);
 
-      if (statsRes.success) setStats(statsRes.stats);
-      if (articlesRes.success) setAllArticles(articlesRes.articles);
+      const serverArts = (articlesRes && articlesRes.success) ? articlesRes.articles : [];
+      const mergedArts = getMergedArticles(serverArts);
+
+      if (statsRes && statsRes.success) {
+        setStats({
+          ...statsRes.stats,
+          totalArticles: Math.max(statsRes.stats.totalArticles || 0, mergedArts.length),
+          publishedArticles: Math.max(statsRes.stats.publishedArticles || 0, mergedArts.filter(a => a.status === 'published').length)
+        });
+      }
+      setAllArticles(mergedArts);
     } catch (err) {
       console.error('Failed to load dashboard statistics:', err.message);
+      setAllArticles(getMergedArticles([]));
     } finally {
       setLoading(false);
     }
