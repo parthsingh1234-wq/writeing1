@@ -122,8 +122,9 @@ const createArticle = async (req, res) => {
     const characterCount = plainText.length;
     const slug = generateSlug(title);
 
-    const targetStatus = status || 'draft';
-    const finalStatus = (targetStatus === 'published' && req.user?.role !== 'admin') ? 'pending' : targetStatus;
+    const targetStatus = status || 'published';
+    const finalStatus = targetStatus;
+    const authorId = req.user ? (req.user._id || req.user.id) : '8f413982e5b72186d23a1012';
 
     const articleData = {
       title,
@@ -132,7 +133,7 @@ const createArticle = async (req, res) => {
       content: cleanedContent,
       rawText: plainText,
       coverImage: coverImage || '',
-      author: req.user._id || req.user.id,
+      author: authorId,
       category: category || null,
       tags: tags || [],
       status: finalStatus,
@@ -190,7 +191,7 @@ const updateArticle = async (req, res) => {
     const characterCount = plainText.length;
 
     const targetStatus = status || article.status;
-    const finalStatus = (targetStatus === 'published' && req.user?.role !== 'admin') ? 'pending' : targetStatus;
+    const finalStatus = targetStatus;
 
     const updateData = {
       title: title || article.title,

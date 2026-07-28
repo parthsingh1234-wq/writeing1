@@ -13,12 +13,12 @@ const {
   approveArticle,
   rejectArticle
 } = require('../controllers/articleController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorize, optionalAuth } = require('../middleware/auth');
 
 router.get('/', getArticles);
 router.get('/:idOrSlug', getArticleByIdOrSlug);
-router.post('/', protect, createArticle);
-router.put('/:id', protect, updateArticle);
+router.post('/', optionalAuth, createArticle);
+router.put('/:id', optionalAuth, updateArticle);
 router.put('/:id/approve', protect, authorize('admin'), approveArticle);
 router.put('/:id/reject', protect, authorize('admin'), rejectArticle);
 router.delete('/:id', protect, deleteArticle);
