@@ -60,6 +60,14 @@ const populateArticle = (article, store) => {
     });
   }
 
+  // Populate images
+  if (Array.isArray(populated.images)) {
+    populated.images = populated.images.map(img => {
+      const imgId = typeof img === 'object' ? (img._id || img.id) : img;
+      return (store.images || []).find(i => i._id === imgId || i.id === imgId) || img;
+    });
+  }
+
   return populated;
 };
 
@@ -134,7 +142,7 @@ const dbAdapter = {
 
   // Article methods
   async findArticles(query = {}) {
-    if (!isFallbackMode()) return await Article.find(query).populate('author', 'name email avatar').populate('category').populate('tags');
+    if (!isFallbackMode()) return await Article.find(query).populate('author', 'name email avatar').populate('category').populate('tags').populate('images');
     const store = getStore();
     let results = store.articles.filter(a => !a.isDeleted);
 
@@ -150,9 +158,9 @@ const dbAdapter = {
     if (!identifier) return null;
     if (!isFallbackMode()) {
       const isId = mongoose.Types.ObjectId.isValid(identifier);
-      let article = await Article.findOne({ slug: identifier }).populate('author', 'name email avatar').populate('category').populate('tags');
+      let article = await Article.findOne({ slug: identifier }).populate('author', 'name email avatar').populate('category').populate('tags').populate('images');
       if (!article && isId) {
-        article = await Article.findById(identifier).populate('author', 'name email avatar').populate('category').populate('tags');
+        article = await Article.findById(identifier).populate('author', 'name email avatar').populate('category').populate('tags').populate('images');
       }
       return article;
     }
